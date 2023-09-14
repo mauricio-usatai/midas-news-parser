@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, List
 
 
-class News(ABC):
+class NewsFeed(ABC):
     """
     "Interface" for news apis
     """
@@ -10,7 +10,6 @@ class News(ABC):
     @abstractmethod
     def get_all(
         self,
-        query: str,
         date_from: str,
         date_to: str,
     ) -> Optional[dict]:
@@ -19,7 +18,6 @@ class News(ABC):
         a dict or None if error
 
         Args:
-            query (str): The query string to look for
             date_from (str): Start date of query
             date_to (str): End date of query
 
@@ -29,18 +27,15 @@ class News(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def filter_by_keyword(
-        self, keyword: str, news_api_response: dict
-    ) -> Optional[List[str]]:
+    def filter_by_relevant_content(self, raw_news: dict) -> List[str]:
         """
         Filter a news list by keyword based on the article's
         url, description and title
 
         Args:
-            keyword (str): The keyword to search
-            news_api_response dict: The news list
+            raw_news dict: The raw news response
 
         Returns:
-            Optional[List[str]]: The filtered list of news
+            [List[str]: The filtered list of news
         """
         raise NotImplementedError

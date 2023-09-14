@@ -9,9 +9,11 @@ load_dotenv()
 
 class Settings(BaseSettings):
     """App config"""
+
     DEPLOY: str = os.environ.get("DEPLOY", "local")
 
     NEWS_KEYWORDS: str = os.environ.get("NEWS_KEYWORDS")
     NEWS_API_KEY: str = os.environ.get("NEWS_API_KEY", "")
 
+    REQUESTS_TIMEOUT: int = 5  # seconds
     LOGGER: str = "LOGGER"
