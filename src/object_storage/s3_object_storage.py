@@ -16,19 +16,20 @@ logger = logging.getLogger(settings.LOGGER)
 class S3ObjectStorage(ObjectStorage):
     def __init__(self):
         if settings.DEPLOY == "local":
-            self._s3 = boto3.resource("s3",
+            self._s3 = boto3.resource(
+                "s3",
                 endpoint_url="http://minio:9000",
                 aws_access_key_id="miniodev",
                 aws_secret_access_key="miniodev",
                 verify=False,
             )
         else:
-            self._s3 = boto3.resource("s3",
+            self._s3 = boto3.resource(
+                "s3",
                 region_name=settings.AWS_REGION,
                 aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
                 aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             )
-
 
     def put(self, path: str, bucket: str, body: StringIO) -> None:
         """

@@ -6,6 +6,7 @@ class NewsFeed(ABC):
     """
     "Interface" for news apis
     """
+
     @abstractmethod
     def get_all(
         self,
@@ -24,7 +25,6 @@ class NewsFeed(ABC):
             Optional[dict]: A dict representing the news api response
         """
         raise NotImplementedError
-
 
     @abstractmethod
     def filter_by_relevant_content(self, raw_news: dict) -> List[str]:

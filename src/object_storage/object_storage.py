@@ -6,6 +6,7 @@ class ObjectStorage(ABC):
     """
     Object storage "interface"
     """
+
     @abstractmethod
     def put(self, path: str, bucket: str, body: StringIO) -> None:
         """
