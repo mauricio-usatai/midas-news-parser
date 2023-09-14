@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 
-from datetime import datetime
-
 
 class News(ABC):
     """
@@ -13,26 +11,26 @@ class News(ABC):
     def get_all(
         self,
         query: str,
-        date_from: datetime,
-        date_to: datetime,
-    ) -> Optional[List[dict]]:
+        date_from: str,
+        date_to: str,
+    ) -> Optional[dict]:
         """
         Should return the full response of the api query as
-        a list of dicts or None if no articles were found
+        a dict or None if error
 
         Args:
             query (str): The query string to look for
-            date_from (datetime): Start date of query
-            date_to (datetime): End date of query
+            date_from (str): Start date of query
+            date_to (str): End date of query
 
         Returns:
-            Optional[List[dict]]: A list of dicts describing each article or None
+            Optional[dict]: A dict representing the news api response
         """
         raise NotImplementedError
 
     @abstractmethod
     def filter_by_keyword(
-        self, keyword: str, news_list: List[dict]
+        self, keyword: str, news_api_response: dict
     ) -> Optional[List[str]]:
         """
         Filter a news list by keyword based on the article's
@@ -40,7 +38,7 @@ class News(ABC):
 
         Args:
             keyword (str): The keyword to search
-            news_list (List[dict]): The news list
+            news_api_response dict: The news list
 
         Returns:
             Optional[List[str]]: The filtered list of news

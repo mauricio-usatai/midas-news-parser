@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+    midas-news-parser:
+        container_name: midas-news-parser
+        image: midas/news-parser:0.1.0
+        build: .
+        environment:
+          - NEWS_KEYWORDS=petrobras
+          - DEPLOY=local
