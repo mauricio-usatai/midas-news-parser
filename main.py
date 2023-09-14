@@ -1,11 +1,14 @@
 from typing import Optional
 
+import json
+from io import StringIO
 from datetime import datetime, timedelta
 
 import pandas as pd
 import requests
 from requests.exceptions import RequestException
 
+from src.object_storage import S3ObjectStorage
 from src.source_page_parser import SourcePageParser
 from src.news import (
     NewsApi,
@@ -45,12 +48,23 @@ def get_page_source(url: str) -> Optional[str]:
 
 
 def main():
+    date = datetime.now().isoformat(timespec="seconds")
+
     news_feed: NewsFeed = NewsApi(query=settings.NEWS_KEYWORDS)
     raw_news = get_news(news_feed=news_feed)
 
-    if not news_feed:
+    if not raw_news:
         logger.info("No news avaiable at this time")
         return
+
+    # Save raw news_feed to object storage
+    buffer = StringIO()
+    json.dump(raw_news, buffer)
+    S3ObjectStorage().put(
+        path=f"news-feed-responses/{date}-news-feed.json",
+        bucket=settings.BUCKET,
+        body=buffer,
+    )
 
     articles = news_feed.filter_by_relevant_content(
         raw_news=raw_news,
@@ -62,8 +76,16 @@ def main():
         if page_source:
             article.parsedContent = SourcePageParser.parse(page_source)
 
-    articles_df = pd.DataFrame([article.dict() for article in articles])
-    logger.info(articles_df)
+    articles_df = pd.DataFrame([article.model_dump() for article in articles])
+
+    # Save raw news_feed to object storage
+    buffer = StringIO()
+    articles_df.to_csv(buffer)
+    S3ObjectStorage().put(
+        path=f"news-feed-articles/{date}-articles.csv",
+        bucket=settings.BUCKET,
+        body=buffer,
+    )
 
 
 if __name__ == "__main__":
