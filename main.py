@@ -1,7 +1,4 @@
 from typing import Optional
-
-import json
-from io import StringIO
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -14,6 +11,7 @@ from src.news import (
     NewsApi,
     NewsFeed,
 )
+from src import utils
 from src.logger import logging
 from settings import Settings
 
@@ -49,7 +47,6 @@ def get_page_source(url: str) -> Optional[str]:
 
 def main():
     company_name = settings.NEWS_KEYWORDS
-    date = datetime.now().isoformat(timespec="seconds")
 
     news_feed: NewsFeed = NewsApi(query=company_name)
     raw_news = get_news(news_feed=news_feed)
@@ -59,12 +56,10 @@ def main():
         return
 
     # Save raw news_feed to object storage
-    buffer = StringIO()
-    json.dump(raw_news, buffer)
-    S3ObjectStorage().put(
-        path=f"news-feed-responses/{company_name}-{date}-news-feed.json",
-        bucket=settings.BUCKET,
-        body=buffer,
+    utils.save_object(
+        object_storage=S3ObjectStorage(),
+        obj=raw_news,
+        key="news-feed.json",
     )
 
     articles = news_feed.filter_by_relevant_content(
@@ -80,12 +75,10 @@ def main():
     articles_df = pd.DataFrame([article.model_dump() for article in articles])
 
     # Save raw news_feed to object storage
-    buffer = StringIO()
-    articles_df.to_csv(buffer)
-    S3ObjectStorage().put(
-        path=f"news-feed-articles/{company_name}-{date}-articles.csv",
-        bucket=settings.BUCKET,
-        body=buffer,
+    utils.save_object(
+        object_storage=S3ObjectStorage(),
+        obj=articles_df,
+        key="articles.csv",
     )
 
 
