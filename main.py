@@ -48,9 +48,10 @@ def get_page_source(url: str) -> Optional[str]:
 
 
 def main():
+    company_name = settings.NEWS_KEYWORDS
     date = datetime.now().isoformat(timespec="seconds")
 
-    news_feed: NewsFeed = NewsApi(query=settings.NEWS_KEYWORDS)
+    news_feed: NewsFeed = NewsApi(query=company_name)
     raw_news = get_news(news_feed=news_feed)
 
     if not raw_news:
@@ -61,7 +62,7 @@ def main():
     buffer = StringIO()
     json.dump(raw_news, buffer)
     S3ObjectStorage().put(
-        path=f"news-feed-responses/{date}-news-feed.json",
+        path=f"news-feed-responses/{company_name}-{date}-news-feed.json",
         bucket=settings.BUCKET,
         body=buffer,
     )
@@ -82,7 +83,7 @@ def main():
     buffer = StringIO()
     articles_df.to_csv(buffer)
     S3ObjectStorage().put(
-        path=f"news-feed-articles/{date}-articles.csv",
+        path=f"news-feed-articles/{company_name}-{date}-articles.csv",
         bucket=settings.BUCKET,
         body=buffer,
     )
