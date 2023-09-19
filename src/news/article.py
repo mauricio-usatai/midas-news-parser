@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class Article(BaseModel):
     sourceName: str
     author: Optional[str]
-    title: str
+    title: Optional[str]
     description: str
     url: str
     publishedAt: str

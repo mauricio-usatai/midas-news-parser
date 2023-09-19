@@ -93,6 +93,7 @@ class NewsApi(NewsFeed):
         filtered_news = [
             news
             for news in sorted_news
+            if news["title"] is not None
             if (
                 self.query in news["url"].lower()
                 or self.query in news["description"].lower()
