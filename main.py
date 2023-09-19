@@ -22,7 +22,7 @@ logger = logging.getLogger(settings.LOGGER)
 
 def get_news(news_feed: NewsFeed) -> Optional[dict]:
     today = datetime.now()
-    yesterday = today - timedelta(days=2)
+    yesterday = today - timedelta(days=1)
 
     response = news_feed.get_all(
         date_from=yesterday.strftime("%Y-%m-%dT00:00:00"),
